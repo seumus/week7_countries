@@ -1,122 +1,3 @@
-// ***** my work at top, walk through on bottom *****
-
-// var main = function(countries) {
-//   addCountries();
-//   // var select = document.getElementById("country-list");
-//
-// }
-//
-// var addCountries = function() {
-//   var url = "https://restcountries.eu/rest/v1";
-//   var request = new XMLHttpRequest();
-//
-//   request.open("GET", url);
-//   request.onload = function() {
-//     if(request.status === 200){
-//       console.log("got the data")
-//       var jsonString = request.responseText;
-//       var countries = JSON.parse(jsonString);
-//       createCountryMenu(countries);
-//       // countriesArray = countries;
-//     }
-//   }
-//   request.send(null);
-// }
-//
-// // var countriesArray = function(countries) {
-//
-//
-// var createCountryMenu = function(countries) {
-//
-//
-//  var select = document.getElementById("country-drop");
-//  select.onchange = function() {
-//    displayCountryInfo(getSelectedCountryName(select), countries);
-//  }
-//
-// for (var i = 0; i < countries.length;  i++) {
-//
-//    var option = document.createElement("option");
-//    option.value = countries[i].name;
-//    option.text = countries[i].name;
-//
-//
-//    select.appendChild(option);
-//  }
-// }
-//
-// // 000
-// //
-// // var handleSelect = function() {
-// //   var select = document.getElementById("country-list");
-// //
-// //   if(select.selectedIndex == -1) {
-// //     return null
-// //   }
-// //
-// //   var f = select.options[select.selectedIndex].value;
-// //
-// //   displayCountryInfo(f);
-// // }
-// //
-// // var countryInformation = function() {
-// //
-// // }
-// //
-// // var displayCountryInfo = function(country) {
-// //   var para = document.createElement("p")
-// //   // console.log(country);
-// //   para.innerText = country
-// //   // para.innerText = country;
-// //   var body = document.querySelector("body");
-// //   body.appendChild(para)
-// // }
-// // window.onload = main;
-//
-//
-//
-//
-//
-// var getSelectedCountryName = function(select) {
-//   return select.options[select.selectedIndex].value;
-// }
-//
-//
-// var displayCountryInfo = function(countryName, countries) {
-//
-//   // var ul = document.getElementById("country-list");
-//   // ul.removeChild(ul.lastChild);
-//   // ul.removeChild(ul.lastChild);
-//   // ul.removeChild(ul.lastChild);
-//   for(var country of countries) {
-//
-//
-//
-//     if(country.name === countryName) {
-//
-//       var li1 = document.createElement("li");
-//       li1.innerText = country.name;
-//
-//       var li2 = document.createElement("li");
-//       li2.innerText = country.population;
-//
-//       var li3 = document.createElement("li");
-//       li3.innerText = country.capital;
-//
-//       var ul = document.getElementById("country-list");
-//
-//       ul.appendChild(li1);
-//       ul.appendChild(li2);
-//       ul.appendChild(li3);
-//     }
-//   }
-// }
-// // parent.removeChild(parent.lastChild);`
-//
-//
-//
-//
-// window.onload = main;
 window.onload = function() {
   var url = "https://restcountries.eu/rest/v1";
   var request = new XMLHttpRequest();
@@ -130,9 +11,13 @@ window.onload = function() {
     }
   }
 
+  // var center = {lat: 55.9532520, lng: -3.1882670}
+  // var map = new Map(center, 10);
+  // console.log(map);
+  // var locator = new GeoLocator(map);
   request.send(null);
 }
-
+var map = null;
 var main = function(countries) {
   populateSelect(countries);
   var selected = countries[0];
@@ -145,10 +30,28 @@ var main = function(countries) {
 
   updateDisplay(selected);
   document.querySelector("#info").style.display = 'block';
+  // console.log(map);
+  var center = {lat: 55.9532520, lng: -3.1882670}
+  map = new Map(center, 8);
+  // var locator = new GeoLocator(map,selected);
 }
+
+
+// var GeoLocator = function(map) {
+//   this.map = map;
+//   this.setMapCenter = function() {
+//     navigator.geolocation.getCurrentPosition(function(position) {
+//       var center = {lat:position.coords.latitude, lng:position.coords.longitude}
+//       this.map.resetCenter(center);
+//       this.map.addMarker(center,"1",'minion2.png')
+//       console.log(center);
+//     }.bind(this))
+//   }
+// }
 
 var populateSelect = function(countries) {
   var parent = document.querySelector("#countries");
+
 
   countries.forEach(function(item,index){
     item.index = index;
@@ -159,8 +62,21 @@ var populateSelect = function(countries) {
 
   });
   parent.style.display = 'block';
+  parent.addEventListener('change', function(){
+    var index = this.value;
+    var country = countries[index];
+    updateDisplay(country);
+    console.log(map);
+    map.changeLocation({lat:country.latlng[0], lng:country.latlng[1]})
+    map.addInfoWindow({lat:country.latlng[0], lng:country.latlng[1]},"Name: " + country.name + "\nPop: " + country.population + "\nCapital: " + country.capital)
+    localStorage.setItem("selectedCountry", JSON.stringify(country));
+  })
 }
 
 var updateDisplay = function(country) {
+  var tags = document.querySelectorAll("#info p");
 
+  // tags[0].innerText = country.name;
+  // tags[1].innerText = country.population;
+  // tags[2].innerText = country.capital;
 }
